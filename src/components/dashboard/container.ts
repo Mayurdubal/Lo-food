@@ -9,23 +9,33 @@ interface IProduct {
   created_at: string;
 }
 
-const UseDashboard = () => {
+const UseDashboard = (city: string, page: number) => {
   const [data, setData] = useState<IProduct[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
-  const getProducts = async (city: string) => {
-    const res = await axios.get(
-      `http://localhost:3000/v1/api/blinkit/products?location=${city}&page=1&limit=20`
-    );
-    setData(res.data.data.data);
-    setIsLoading(false);
+  const getProducts = async (city: string, page: number) => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/v1/api/blinkit/products?location=${city}&page=${page}&limit=20`
+      );
+      const fetchedData = res.data.data.data;
+      setData((prevData) => [...prevData, ...fetchedData]);
+      setHasMore(fetchedData.length > 0);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setHasMore(false);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    setIsLoading(true);
-    getProducts("mumbai");
-  }, []);
+    getProducts(city, page);
+  }, [city, page]);
 
-  return { data, isLoading };
+  return { data, isLoading, hasMore };
 };
+
 export default UseDashboard;
