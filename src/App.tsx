@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
-import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import React, { useState } from "react";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
 import ProductTable from "./components/productTable";
 import Header from "./components/header";
+import Dashboard from "./components/dashboard/dashboard";
 
 function App() {
   const [city, setCity] = useState("");
@@ -12,9 +20,9 @@ function App() {
 
   return (
     <>
-      <Header />
-      <Box sx={{ m: 5 }}>
-        <Box width={150} height={90} sx={{ position: 'relative' }}>
+      <Dashboard />
+      {/* <Box sx={{ m: 5 }}>
+        <Box width={150} height={90} sx={{ position: "relative" }}>
           <FormControl fullWidth sx={{ zIndex: 1 }}>
             <InputLabel id="demo-simple-select-label">Select City</InputLabel>
             <Select
@@ -25,13 +33,17 @@ function App() {
               onChange={handleChange}
               sx={{ zIndex: 1 }}
             >
-              <MenuItem value="Mumbai" sx={{ fontSize: 14 }}>Mumbai</MenuItem>
-              <MenuItem value="Bengaluru" sx={{ fontSize: 14 }}>Bengaluru</MenuItem>
+              <MenuItem value="Mumbai" sx={{ fontSize: 14 }}>
+                Mumbai
+              </MenuItem>
+              <MenuItem value="Bengaluru" sx={{ fontSize: 14 }}>
+                Bengaluru
+              </MenuItem>
             </Select>
           </FormControl>
         </Box>
         <ProductTable city={city} />
-      </Box>
+      </Box> */}
     </>
   );
 }

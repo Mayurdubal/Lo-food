@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import React, { useEffect, useState } from "react";
+import { Box, Typography } from "@mui/material";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import UseDashboard from "./dashboard/container";
 
 interface Product {
   pincode: string;
@@ -21,101 +22,101 @@ interface ProductTableProps {
 }
 
 const ProductTable: React.FC<ProductTableProps> = ({ city }) => {
-  const [data, setData] = useState<Product[]>([]);
-  const [filteredData, setFilteredData] = useState<Product[]>([]);
-
-  useEffect(() => {
-    fetch('/data.json')
-      .then(response => response.json())
-      .then(data => {
-        setData(data);
-        if (city) {
-          setFilteredData(data.filter((product: Product) => product.location.includes(city)));
-        } else {
-          setFilteredData(data);
-        }
-      })
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
-
-  useEffect(() => {
-    if (city) {
-      setFilteredData(data.filter((product: Product) => product.location.includes(city)));
-    } else {
-      setFilteredData(data);
-    }
-  }, [city, data]);
+  const { data, isLoading } = UseDashboard();
 
   const columns: GridColDef[] = [
-    { 
-      field: 'pincode', 
-      headerName: 'Pincode', 
-      width: 150
+    {
+      field: "product_name",
+      headerName: "Product Name",
+      width: 700,
+      // renderCell: (params: GridRenderCellParams<Product>) => (
+      //   <Box
+      //     sx={{
+      //       overflowWrap: "break-word",
+      //       wordBreak: "break-word",
+      //     }}
+      //   >
+      //     {params.row.results.length > 0 ? (
+      //       params.row.results.map((result, index) => (
+      //         <Box key={index}>
+      //           <Typography fontSize={13}>{result.productName}</Typography>
+      //         </Box>
+      //       ))
+      //     ) : (
+      //       <Typography fontSize={13}>No products available</Typography>
+      //     )}
+      //   </Box>
+      // ),
     },
     {
-      field: 'productInfo',
-      headerName: 'Product Name',
-      width: 400,
-      renderCell: (params: GridRenderCellParams<Product>) => (
-        <Box sx={{ mb: 1, overflowWrap: 'break-word', wordBreak: 'break-word' }}>
-          {params.row.results.length > 0 ? (
-            params.row.results.map((result, index) => (
-              <Box key={index} sx={{ mb: 1 }}>
-                <Typography variant="body2" color="gray" fontSize={13} sx={{ whiteSpace: 'pre-wrap' }}>
-                  {result.productName}
-                </Typography>
-              </Box>
-            ))
-          ) : (
-            <Typography variant="body2" color="gray" fontSize={13}>
-              No products available
-            </Typography>
-          )}
-        </Box>
-      )
-    },
-    {
-      field: 'status',
-      headerName: 'Status',
+      field: "status",
+      headerName: "Status",
       width: 200,
       renderCell: (params: GridRenderCellParams<Product>) => {
-        const stockStatus = params.row.results.length > 0
-          ? params.row.results[0].stockStatus
-          : 'No products available';
-          
+        console.log(params.row.status);
         return (
-          <Typography variant="body2" color="gray" fontSize={13}>
-            {stockStatus}
-          </Typography>
+          <>
+            {params.row.status === "IN_STOCK" ? (
+              <Typography variant="body2" color="green" fontSize={13}>
+                {params.row.status}
+              </Typography>
+            ) : (
+              <Typography variant="body2" color="red" fontSize={13}>
+                {params.row.status}
+              </Typography>
+            )}
+          </>
         );
-      }
+      },
+      //       ? params.row.results[0].stockStatus
+      //       : "Out of Stock";
+
+      //   return (
+      //     <Typography variant="body2" color="gray" fontSize={13}>
+      //       {stockStatus}
+      //     </Typography>
+      //   );
+      // },
+    },
+    {
+      field: "area",
+      headerName: "Area",
+      width: 150,
+    },
+    {
+      field: "pincode",
+      headerName: "Pincode",
+      width: 150,
     },
   ];
 
   return (
-    <Box sx={{ width: '100%', mt: 8 }}>
+    <Box sx={{ width: "100%", mt: 2 }}>
       <DataGrid
-        autoHeight
         columns={columns}
-        rows={filteredData}
-        getRowId={(row) => row.pincode}
-        disableColumnFilter 
-        disableColumnMenu  
-        hideFooter 
+        rows={data}
+        loading={isLoading}
+        disableColumnFilter
+        disableColumnMenu
+        columnHeaderHeight={40}
+        disableColumnSorting
+        onCellClick={(_, e) => e.stopPropagation()}
+        hideFooter
         sx={{
-          '& .MuiDataGrid-columnHeader': {
-            color: 'black'
+          "& .MuiDataGrid-columnHeader": {
+            color: "#941f5e",
+            height: "10px",
           },
-          '& .MuiDataGrid-cell:hover': {
-            color: 'black',
-            fontSize: 16
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontWeight: "500",
           },
-          boxShadow: 2,
-          '& .MuiDataGrid-cell': {
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'normal',
-          }
+          "& .MuiDataGrid-cell": {
+            display: "flex",
+            alignItems: "center",
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            height: "72vh",
+          },
         }}
       />
     </Box>
